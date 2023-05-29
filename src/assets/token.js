@@ -4,7 +4,7 @@ export const storeToken = async (value) => {
   } catch (e) {}
 };
 
-export const getToken = async () => {
+export const  getToken = async () => {
   try {
     let value = await localStorage.getItem("@authToken");
     if (value !== null) {

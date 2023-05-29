@@ -12,6 +12,15 @@
     transition: filter 300ms;
 }
 
+.auth-error-message{
+
+        font-size: 32px;
+        color: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }      
+
 .logo:hover {
     filter: drop-shadow(0 0 2em #646cffaa);
 }
