@@ -7,6 +7,7 @@ import Modal from "./Modal";
 import { useFetchData } from "../assets/hooks/hooks";
 import { signOut } from "../assets/token";
 import { useNavigate, useNavigation } from "react-router-dom";
+import { Oval } from "react-loader-spinner";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
@@ -29,7 +30,20 @@ const Sidebar = () => {
     { title: "About", src: "Chart_Fill" },
   ];
   if (isLoading) {
-    return <div>Loading...</div>; // Show a loading indicator
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <Oval
+      height={80}
+      width={80}
+      color="#4fa94d"
+      wrapperStyle={{}}
+      wrapperClass=""
+      visible={true}
+      ariaLabel='oval-loading'
+      secondaryColor="#4fa94d"
+      strokeWidth={2}
+      strokeWidthSecondary={2}
+    />
+</div>; // Show a loading indicator; // Show a loading indicator
   }
 
   if (error) {

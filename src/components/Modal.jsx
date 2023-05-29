@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import CustomInput from "./customComponent/customInput";
+import CustomInput from "./customComponent/CustomInput";
 import { useActivityCreate } from "../assets/hooks/hooks";
 
 export default function Modal({ callb }) {
@@ -10,31 +10,63 @@ export default function Modal({ callb }) {
   const [activityType, setActivityType] = useState("");
   const fetchActivityMutation = useActivityCreate();
 
+  const validateForm = () => {
+    let isValid = true;
+
+    if (name.length === 0 || name.length > 20 || !/^[a-zA-Z]+$/.test(name)) {
+      isValid = false;
+    }
+
+    if (description.length > 100) {
+      isValid = false;
+    }
+
+    if (
+      duration.length === 0 ||
+      duration < 1 ||
+      duration > 60 ||
+      isNaN(duration) ||
+      duration.includes("-")
+    ) {
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleNameChange = (e) => {
-    setName(e.target.value);
+    const inputValue = e.target.value;
+    const sanitizedValue = inputValue.replace(/[^a-zA-Z\s]/g, "").slice(0, 20);
+    setName(sanitizedValue);
   };
+
   const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
+    const inputValue = e.target.value.slice(0, 100);
+    setDescription(inputValue);
   };
+
   const handleActivityTypeChange = (e) => {
     setActivityType(e.target.value);
   };
+
   const handleDurationChange = (e) => {
-    setDuration(e.target.value);
+    const inputValue = e.target.value;
+  
+    if (/^\d{1,2}$/.test(inputValue) && inputValue >= 1 && inputValue <= 60 && !inputValue.includes("-")) {
+      setDuration(inputValue);
+    } else {
+      setDuration("");
+    }
   };
 
   const onSuccessCb = async (data) => {
     try {
-      // await storeToken(data?.token);
-
       setActivityType("");
       setDescription("");
       setDuration("");
       setName("");
-      // <Link to="/Sidebar"></Link>;
       console.log("activity successfully created");
       callb(false);
-      // navigation("/Sidebar");
     } catch (error) {
       console.log("activity", error);
     }
@@ -45,19 +77,21 @@ export default function Modal({ callb }) {
   };
 
   const handelAddActivity = () => {
-    const mutationArgs = {
-      name,
-      description,
-      activityType,
-      duration,
-      onSuccessCb,
-      onErrorCb,
-    };
-    fetchActivityMutation.mutate(mutationArgs);
+    if (validateForm()) {
+      const mutationArgs = {
+        name,
+        description,
+        activityType,
+        duration,
+          onSuccessCb,
+        onErrorCb,
+      };
+      fetchActivityMutation.mutate(mutationArgs);
+    } else {
+      console.log("Invalid form input");
+    }
   };
 
-  //props.ca
-  //callb(false);
   return (
     <section
       className="
@@ -73,7 +107,7 @@ export default function Modal({ callb }) {
             <div className="grid gap-2 sm:grid-cols-2 sm:gap-2">
               <CustomInput
                 type="text"
-                placeholder="Name"
+                placeholder="Title"
                 name="uname"
                 heading="Name"
                 handleChange={(text) => handleNameChange(text)}
@@ -130,7 +164,7 @@ export default function Modal({ callb }) {
 
               <CustomInput
                 type="number"
-                placeholder="Duration"
+                placeholder="Duration in minutes"
                 name="time_duration"
                 heading="Duration"
                 handleChange={(text) => handleDurationChange(text)}

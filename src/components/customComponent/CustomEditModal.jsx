@@ -19,30 +19,38 @@ export default function CustomEditModal({
   const UpdateFn = useUpadate();
 
   const handleNameChange = (e) => {
-    setName(e.target.value);
+    const inputValue = e.target.value;
+    const sanitizedValue = inputValue.replace(/[^a-zA-Z\s]/g, "").slice(0, 20);
+    setName(sanitizedValue);
   };
+
   const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
+    const newDescription = e.target.value.slice(0, 300);
+    setDescription(newDescription);
   };
+
   const handleActivityTypeChange = (e) => {
     setActivityType(e.target.value);
   };
+
   const handleDurationChange = (e) => {
-    setDuration(e.target.value);
+    const inputValue = e.target.value;
+
+    if (/^\d+$/.test(inputValue) && inputValue >= 1 && inputValue <= 60 && !inputValue.includes("-")) {
+      setDuration(inputValue);
+    } else {
+      setDuration("");
+    }
   };
 
   const onSuccessCb = async (data) => {
     try {
-      // await storeToken(data?.token);
-
       setActivityType("");
       setDescription("");
       setDuration("");
       setName("");
-      // <Link to="/Sidebar"></Link>;
       console.log("activity successfully Updated");
       callb(false);
-      // navigation("/Sidebar");
     } catch (error) {
       console.log("Edit activity", error);
     }
@@ -84,7 +92,7 @@ export default function CustomEditModal({
             <div className="grid gap-2 sm:grid-cols-2 sm:gap-2">
               <CustomInput
                 type="text"
-                placeholder="Name"
+                placeholder="Title"
                 name="uname"
                 heading="Name"
                 value={name}
@@ -144,7 +152,7 @@ export default function CustomEditModal({
 
               <CustomInput
                 type="number"
-                placeholder="Duration"
+                placeholder="Duration in minutes"
                 name="time_duration"
                 heading="Duration"
                 handleChange={(text) => handleDurationChange(text)}
